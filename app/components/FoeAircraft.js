@@ -1,7 +1,7 @@
 /**
  * Created by sujialong on 2017/5/8.
  */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import {
     StyleSheet,
     Image,
@@ -22,7 +22,7 @@ const {
     bossDuration
 } = Constant.aircraft;
 
-export default class FoeAircraft extends Component {
+export default class FoeAircraft extends PureComponent {
     constructor(props) {
         super(props);
         const {positionY,positionX} = this.props;

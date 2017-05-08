@@ -1,7 +1,7 @@
 /**
  * Created by sujialong on 2017/5/6.
  */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import {
     StyleSheet,
     View,
@@ -16,7 +16,7 @@ import StopGameRemind from '../components/StopGameRemind';
 const {width} = Constant.window;
 
 @observer
-export default class UserBar extends Component {
+export default class UserBar extends PureComponent {
 
     state = {
         isStartGame: true,

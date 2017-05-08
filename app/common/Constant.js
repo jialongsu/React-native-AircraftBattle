@@ -25,7 +25,10 @@ let aircraft = {
     bossBoomDuration: 1200,//boss爆炸速率
     shotTime:1000,//主机发射子弹间隔
     shotDuration:3000,//主机子弹速度
+    boss_shotTime:1000,//boss发射子弹间隔
+    boss_shotDuration:3000,//boss子弹速度
     myBullte:require('../image/ani_bullet_tailing0.png'),//主机默认子弹图片
+    bossBullteImg:require('../image/boss_bullte.png'),//主机默认子弹图片
 }
 
 export default {

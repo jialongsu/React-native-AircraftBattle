@@ -4,7 +4,7 @@
 import {observable ,computed ,action} from 'mobx';
 
 class BossStore {
-    allBlood = 100;//总血量
+    allBlood = 50;//总血量
     atk = 2;//攻击力
     @observable
     blood = this.allBlood;//当前血量
@@ -17,7 +17,7 @@ class BossStore {
 
     @action
     resetState = () => {
-        this.blood = 100;
+        this.blood = 50;
     }
 
     @computed

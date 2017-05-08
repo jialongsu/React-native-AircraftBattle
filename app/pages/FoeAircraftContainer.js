@@ -1,10 +1,7 @@
 /**
  * Created by sujialong on 2017/5/5.
  */
-/**
- * Created by sujialong on 2017/5/5.
- */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import {
     StyleSheet,
     View,
@@ -29,7 +26,7 @@ const {
     bossDuration
 } = Constant.aircraft;
 
-export default class FoeAircraftContainer extends  Component {
+export default class FoeAircraftContainer extends  PureComponent {
 
     constructor(props) {
         super(props);
@@ -53,8 +50,47 @@ export default class FoeAircraftContainer extends  Component {
         this.shouldUpdate = false;
     }
 
+    /**
+     * 重置
+     * @returns {XML}
+     */
+    resetState = () => {
+        this.setBossView("reset");
+        this.foeAircraftObjAry = [];
+        this.key = -1;
+        this.shouldUpdate = true;
+        this.setState({
+            foeAircraftAry:[]
+        });
+    }
+
     stopCreateFoeAircraft = () => {
         clearInterval(this.createFoeAircraftIntv);
+        this.setBossView("stop");
+    }
+
+    setBossView = (type) => {
+        const ary = this.foeAircraftObjAry;
+        let length = ary.length;
+        let item;
+        for(let i = 0;i < length;i++){
+            if(ary[i] == "foeAircraft_ref_boos"){
+                item = this.refs[ary[i]];
+                break;
+            }
+        }
+
+        if(item){
+            switch (type){
+                case 'stop':
+                    item.stopAnimated();
+                    break;
+                case 'reset':
+                    item.resetState();
+                    break;
+            }
+        }
+
     }
 
     /**
@@ -98,7 +134,7 @@ export default class FoeAircraftContainer extends  Component {
             /**
              * 生成20个小兵后出现Boos
              */
-            if(key % 20 == 0  && key !=0 && !isCreate_boss && !isLive_boss){
+            if(key % 20 == 0   && key !=0 && !isCreate_boss && !isLive_boss){
                 refsKey = 'foeAircraft_ref_boos';
                 isCreate_boss = true;
             }else{
@@ -116,19 +152,6 @@ export default class FoeAircraftContainer extends  Component {
                 foeAircraftAry:oldAry
             });
         },createFoeAircraftTime);
-    }
-
-    /**
-     * 重置
-     * @returns {XML}
-     */
-    resetState = () => {
-        this.foeAircraftObjAry = [];
-        this.key = -1;
-        this.shouldUpdate = true;
-        this.setState({
-            foeAircraftAry:[]
-        });
     }
 
     render() {

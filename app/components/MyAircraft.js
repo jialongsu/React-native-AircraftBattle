@@ -1,7 +1,7 @@
 /**
  * Created by sujialong on 2017/5/6.
  */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import {
     StyleSheet,
     Image,
@@ -16,7 +16,7 @@ const {
     boomDuration,
 } = Constant.aircraft;
 
-export default class MyAircraft extends Component {
+export default class MyAircraft extends PureComponent {
 
     boomValue = new Animated.Value(1);
 

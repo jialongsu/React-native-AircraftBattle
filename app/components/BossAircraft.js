@@ -24,11 +24,11 @@ const {
     bossDuration
 } = Constant.aircraft;
 
-export default class BossView extends PureComponent {
+export default class BossAircraft extends PureComponent {
 
     constructor(props) {
         super(props);
-        this.isDestroy = false;
+        this.isDestroy = false;//true:存活,false:已销毁
         this.positionY = new Animated.Value(-height);
         this.positionX = new Animated.Value(0);
         this.boomValue = new Animated.Value(1);
@@ -65,7 +65,13 @@ export default class BossView extends PureComponent {
         // this.startAnimated();
         this.animatedY.start(({finished}) => {
             // finished && this.loopAnimatedX();
+            //boss开始生产子弹
+            !this.isDestroy && this.getBossBullteObj().createBullte();
         });
+    }
+
+    componentWillUnmount() {
+        this.killBoss();
     }
 
     loopAnimatedX = () => {
@@ -74,14 +80,36 @@ export default class BossView extends PureComponent {
         });
     }
 
+    getBossBullteObj = () => {
+        return this.refs["bossBullte"];
+    }
+
+    /**
+     * 重置
+     * @returns {XML}
+     */
+    resetState = () => {
+        this.getBossBullteObj().resetState();
+    }
+
     startAnimated = () => {
         // this.animatedY.start(({finished}) => {
         //     // finished && this.loopAnimatedX();
         // });
+        this.getBossBullteObj().startCreateBullte();
     }
 
     stopAnimated = () => {
-        // this.animatedY.stop();
+        this.animatedY.stop();
+        this.getBossBullteObj().stopCreateBullte();
+    }
+
+    killBoss() {
+        const bossBullteObj = this.getBossBullteObj();
+        //停止生产子弹
+        bossBullteObj.stopCreateBullte();
+        //清除屏幕
+        bossBullteObj.resetState();
     }
 
     /**
@@ -116,6 +144,9 @@ export default class BossView extends PureComponent {
         const {bossStore} = this.props;
         return (
             <View style={styles.container}>
+                <BossBullte
+                    ref={"bossBullte"}
+                    parentContext={this}/>
                 <Animated.Image
                     ref="boosview"
                     source={foeAircraft}
@@ -132,10 +163,6 @@ export default class BossView extends PureComponent {
                         source={bossBoomImg}
                         style={styles.boomImg}/>
                 </Animated.Image>
-                <Image
-                    ref="boomView"
-                    source={bossBoomImg}
-                    style={styles.boomImg}/>
             </View>
 
         );
@@ -166,7 +193,7 @@ const styles = StyleSheet.create({
         height:bossSize,
         position:'absolute',
         bottom:0,
-        opacity:1
+        opacity:0
     },
     boosImg:{
         width:bossSize,

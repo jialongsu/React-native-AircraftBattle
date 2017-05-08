@@ -76,8 +76,8 @@ export default class Main extends Component {
                 //开始手势操作,给用户一些视觉反馈,让他们知道发生了什么
                 this.myAircraft_positionY.setOffset(this.positionValueY);
                 this.myAircraft_positionX.setOffset(this.positionValueX);
-                this.positionValueY = 0;
-                this.positionValueX = 0;
+                this.myAircraft_positionY.setValue(0);
+                this.myAircraft_positionX.setValue(0);
             },
             onPanResponderMove: (evt,{dx,dy,vy}) => {
                 // 最近一次的移动距离为gestureState.move{X,Y}
@@ -113,7 +113,7 @@ export default class Main extends Component {
         var foeAircraftContext = this.refs["foeAircraftContainer"];
         const bulletObjAry = bullteContext.bulletObjAry;
         const foeAircraftObjAry = foeAircraftContext.foeAircraftObjAry;
-        //暂停检查元素相撞定检查器
+        //暂停检查元素相撞检查器
         clearInterval(this.checkBoomInt);
         //暂停创建子弹
         bullteContext.stopCreateBullte();
@@ -165,6 +165,13 @@ export default class Main extends Component {
         var foeAircraftContext = this.refs["foeAircraftContainer"];
         const bulletObjAry = bullteContext.bulletObjAry;
         const foeAircraftObjAry = foeAircraftContext.foeAircraftObjAry;
+        let bossContext;
+        //主机坐标
+        const myAircraftWidth = myAircraftSize/2;
+        const myAircraft_maxValueY = this.positionValueY+myAircraftWidth;
+        const myAircraft_minValueY = this.positionValueY-myAircraftWidth;
+        const myAircraft_maxValueX = this.positionValueX+myAircraftWidth;
+        const myAircraft_minValueX = this.positionValueX-myAircraftWidth;
         //子弹对象
         bulletObjAry.map((item,i) => {
             const bullteView = bullteContext.refs[item];
@@ -189,12 +196,14 @@ export default class Main extends Component {
                         const maxValueY = foeAircraft_positionY+foeAircraftWidth;
                         const minValueY = foeAircraft_positionY-foeAircraftWidth;
 
+                        //获取boss对象
+                        if(foeItem == "foeAircraft_ref_boos")bossContext = foeAircraftView;
                         //主机子弹与敌机相撞
                         if(positionX <= maxValueX && positionX >= minValueX
                             && positionY <= maxValueY && positionY >= minValueY
                             && !foeAircraft_isDestroy && !bullte_isDestroy){
 
-                            //与boss相撞,计算boss血量
+                            //主机子弹与boss相撞,计算boss血量
                             if(foeItem == "foeAircraft_ref_boos"){
                                 const bossBlood = this.bossStore.changBlood();
                                 bossBlood <= 0 && foeAircraftView.hideView();
@@ -207,11 +216,6 @@ export default class Main extends Component {
                         }
 
                         //主机与敌机相撞
-                        const myAircraftWidth = myAircraftSize/2;
-                        const myAircraft_maxValueY = this.positionValueY+myAircraftWidth;
-                        const myAircraft_minValueY = this.positionValueY-myAircraftWidth;
-                        const myAircraft_maxValueX = this.positionValueX+myAircraftWidth;
-                        const myAircraft_minValueX = this.positionValueX-myAircraftWidth;
                         const diffMaxValueX = Math.abs(maxValueX-myAircraft_maxValueX);
                         const diffMinValueX = Math.abs(minValueX-myAircraft_minValueX);
                         const diffMaxValueY = Math.abs(maxValueY-myAircraft_maxValueY);
@@ -232,6 +236,33 @@ export default class Main extends Component {
                 });
             }
         });
+
+        //boss子弹与主机相撞
+        if(bossContext){
+            const bossBullteContext = bossContext.getBossBullteObj();
+            const bossBulletObjAry = bossBullteContext.bulletObjAry;
+
+            bossBulletObjAry.map((item,i) => {
+                const bullteView = bossBullteContext.refs[item];
+                const position = bullteView.getPosition();
+
+                if(position){
+                   const {positionY,positionX} = position;
+                   const bullte_isDestroy = bullteView.isDestroy;//子弹存活状态
+
+                    //boss子弹与主机相撞
+                    if(positionX <= myAircraft_maxValueX && positionX >= myAircraft_minValueX
+                        && positionY <= myAircraft_maxValueY && positionY >= myAircraft_minValueY
+                        && !bullte_isDestroy){
+                        this.store.changBlood();//计算血量
+                        bullteView.hideView();
+                        this.chooseGame();
+                    }
+                }
+
+            });
+        }
+
     }
 
     /**
@@ -268,6 +299,8 @@ export default class Main extends Component {
         //主机状态重置
         this.myAircraft_positionY.setValue(0);
         this.myAircraft_positionX.setValue(0);
+        this.myAircraft_positionY.flattenOffset();
+        this.myAircraft_positionX.flattenOffset();
         this.store.resetState();
         this.refs["myAircraft"].createMyAircraft();
         // 清除屏幕

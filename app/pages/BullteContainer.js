@@ -18,6 +18,7 @@ const {
     shotTime,
     shotDuration,
 } = Constant.aircraft;
+import BullteView from '../components/BullteView';
 
 export default class BullteContainer extends  Component {
 
@@ -103,6 +104,9 @@ export default class BullteContainer extends  Component {
                     key={`bullteView_${item.key}`}
                     positionY={item.positionY}
                     positionX={item.positionX}
+                    animated_toValue={-height}
+                    bullteImg={myBullte}
+                    style={styles.bullte}
                 />;
             bulletAry.push(view);
         });
@@ -110,83 +114,6 @@ export default class BullteContainer extends  Component {
             <View style={styles.bullteCon}>
                 {bulletAry}
             </View>
-        );
-    }
-}
-
-class BullteView extends Component {
-
-    constructor(props) {
-        super(props);
-        const {positionY,positionX,isBoom} = this.props;
-        this.isDestroy = false;
-        this.positionY = positionY-myAircraftSize;
-        this.state = {
-            positionY:new Animated.Value(this.positionY)
-        };
-        let key = 0;
-        this.state.positionY.addListener((e) => {
-            // isBoom();
-            this.positon = {
-                positionY: e.value,
-                positionX: positionX
-            }
-        });
-    }
-
-    componentDidMount() {
-        this.animated = Animated.timing(this.state.positionY,{
-            toValue:-height,
-            easing: Easing.linear,
-            duration: shotDuration,
-        });
-        this.startAnimated();
-    }
-
-    componentWillUnmount() {
-        this.state.positionY.removeAllListeners();
-    }
-
-    startAnimated = () => {
-        this.animated.start()
-    }
-
-    stopAnimated = () => {
-        this.animated.stop();
-    }
-
-    shouldComponentUpdate(nextProps,nextState) {
-        return false;
-    }
-
-    /**
-     * 相撞,制造销毁假象
-     * @returns {XML}
-     */
-    hideView = () => {
-        this.isDestroy = true;
-        this.refs["bullteView"].setNativeProps({
-            style:{
-                opacity:0
-            }
-        });
-    }
-
-    getPosition() {
-        return this.positon;
-    }
-
-    render() {
-        const {positionX} = this.props;
-        return (
-            <Animated.Image
-                ref={"bullteView"}
-                source={myBullte}
-                style={[styles.bullte,{
-                transform:[
-                    {translateX:positionX},
-                    {translateY:this.state.positionY}
-                ]}]}/>
         );
     }
 }
@@ -203,7 +130,5 @@ const styles = StyleSheet.create({
         height:30,
         // borderRadius:5,
         // backgroundColor:'red',
-        position:'absolute',
-        bottom:0
     }
 });
