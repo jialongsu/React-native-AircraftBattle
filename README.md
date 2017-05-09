@@ -17,6 +17,9 @@ React-native-AircraftBattle,业余时间做的一个结合RN和MobX的飞机大�
 - ✔️ 绘制敌机小兵
 - ✔️ 绘制Boss（子弹，血量）
 
+Android apk:
+![img](https://github.com/1035901787/React-native-AircraftBattle/blob/master/screenshots/1494309613.png)
+ios的ipa后面会放上来
 
 **运行**
 1.clon项目到本地，在终端进入项目根目录，输入：
